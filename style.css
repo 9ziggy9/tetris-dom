@@ -1,0 +1,62 @@
+/* Commodore 64 colors! */
+/* #000 black */
+/* #00A blue */
+/* #08F light blue */
+/* #AFE cyan */
+/* #0C5 green */
+/* #AF6 light green */
+/* #333 dark gray */
+/* #777 light grey */
+/* #BBB light light grey */
+/* #FFF white */
+/* #640 brown */
+/* #800 red */
+/* #F77 light red */
+/* #C4C violet */
+/* #D85 orange */
+/* #EE7 yellow */
+
+
+html, body {
+    display: absolute;
+    background-color: #08F;
+    color: #BBB;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    font-family: 'VT323', monospace;
+    font-size: 28px;
+    caret-color: transparent;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+}
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(20, 1fr);
+    grid-gap: 0px;
+}
+
+.free {
+    background-color: #00A;
+    box-sizing: border-box;
+    border: 1px solid #FFF;
+    width: 30px;
+    height: 30px;
+}
+
+.occupied {
+    background-color: #FFF;
+    box-sizing: border-box;
+    border: 1px solid #00A;
+    width: 30px;
+    height: 30px;
+}
