@@ -19,7 +19,7 @@ const L = [
   [0x7, 0x4, 0x0],
   [0x2, 0x2, 0x3],
   [0x3, 0x1, 0x1],
-  [0x7, 0x1, 0x0],
+  [0x0, 0x1, 0x7]
 ];
 
 const S = [
@@ -33,44 +33,19 @@ const Z = [
   [0x2, 0x3, 0x1],
 ];
 
-const TETROID_SET = [I, T, L, S];
+const TETROID_SET = [I, T, L, S, Z];
 
 const INITIAL = {
   tetroid: {
     pos: [0,0], // x and y coordinates
-    shape: Z, // rotate me
+    // shape: TETROID_SET[Math.floor(TETROID_SET.length * Math.random())]
+    shape: L,
   },
   board: [
     ...Array(ROWS).fill(0x1000),
     0xFFF,
   ],
 };
-
-// REMEMBER ENDIANNESS
-// We can simply use HEX to represent tetroids.
-// 0x8, 1000
-// 0x8, 1000
-// 0xc, 1100
-// which can be further condensed as:
-// 0x88c, where each hex place represents a row
-// For other orientations, we apply the same strategy.
-// 0x0017
-// 0000
-// 0001
-// 0111
-// 0x311
-// 0011
-// 0001
-// 0001
-// 0xE80
-// 1110
-// 1000
-// 0000
-
-// 0000
-// 0001
-// 0011
-// 0001
 
 function initialize() {
   let state = INITIAL;
@@ -83,6 +58,10 @@ function initialize() {
     if (e.key === "k") state = transition(state, rotate);
     render(state);
   });
+  setInterval(() => {
+    state = transition(state, translateDown);
+    render(state);
+  }, 1000);
 }
 
 function embedTetroid(tetroid) {
@@ -105,7 +84,25 @@ function isColliding(state) {
   return RETURN_VALUE;
 }
 
-const transition = (state, cb=s=>s) => ({tetroid: cb(state).tetroid, board: cb(state).board});
+function scanLines(state) {
+  const filteredBoard = state.board.slice(0,ROWS).filter(line => {
+      return !((line & 0xFFF) === 0xFFF);
+  });
+  const newBoard = [
+    ...Array(ROWS - filteredBoard.length).fill(0x1000),
+    ...filteredBoard,
+    0xFFF
+  ];
+  return {
+    ...state,
+    board: newBoard
+  };
+}
+
+const transition = (state, cb=s=>s) => {
+  const newState = scanLines(cb(state));
+  return {tetroid: newState.tetroid, board: newState.board};
+};
 
 function translateDown(state) {
   const candidateState = {

@@ -19,8 +19,8 @@
 
 html, body {
     display: absolute;
-    background-color: #08F;
-    color: #BBB;
+    background-color: #444;
+    color: #444;
     margin: 0;
     height: 100%;
     width: 100%;
@@ -46,17 +46,17 @@ html, body {
 }
 
 .free {
-    background-color: #00A;
+    background-color: #d7875f;
     box-sizing: border-box;
-    border: 1px solid #FFF;
+    border: 1px solid #EEE;
     width: 30px;
     height: 30px;
 }
 
 .occupied {
-    background-color: #FFF;
+    background-color: #EEE;
     box-sizing: border-box;
-    border: 1px solid #00A;
+    border: 1px solid #d7875f;
     width: 30px;
     height: 30px;
 }
