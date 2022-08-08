@@ -60,7 +60,6 @@ function initialize() {
   });
   // PLEB MODE
   document.addEventListener("keydown", e => {
-    console.log(e);
     if (e.keyCode === 37) state = transition(state, translateLeft);
     if (e.keyCode === 39) state = transition(state, translateRight);
     if (e.keyCode === 40) state = transition(state, translateDown);
@@ -141,7 +140,7 @@ function translateLeft(state) {
 	    state.tetroid.pos[1]]
     }
   };
-  if (isColliding(candidateState)) console.log("left collision");
+  if (isColliding(candidateState)) return state;
   return candidateState;
 }
 
