@@ -50,11 +50,21 @@ function initialize() {
   let state = INITIAL;
   initBoard(state);
   render(transition(state));
+  // BASED MODE
   document.addEventListener("keypress", e => {
     if (e.key === "h") state = transition(state, translateLeft);
     if (e.key === "l") state = transition(state, translateRight);
     if (e.key === "j") state = transition(state, translateDown);
     if (e.key === "k") state = transition(state, rotate);
+    render(state);
+  });
+  // PLEB MODE
+  document.addEventListener("keydown", e => {
+    console.log(e);
+    if (e.keyCode === 37) state = transition(state, translateLeft);
+    if (e.keyCode === 39) state = transition(state, translateRight);
+    if (e.keyCode === 40) state = transition(state, translateDown);
+    if (e.keyCode === 38) state = transition(state, rotate);
     render(state);
   });
   setInterval(() => {
