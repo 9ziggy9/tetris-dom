@@ -9,18 +9,41 @@ const I = [
 ];
 
 const T = [
-  [0xE, 0x4, 0x0],
+  [0x7, 0x2, 0x0],
   [0x2, 0x3, 0x2],
-  [0x0, 0x4, 0xE],
+  [0x0, 0x2, 0x7],
   [0x1, 0x3, 0x1],
 ];
+
+const L = [
+  [0x7, 0x4, 0x0],
+  [0x2, 0x2, 0x3],
+  [0x3, 0x1, 0x1],
+  [0x7, 0x1, 0x0],
+];
+
+const S = [
+  [0x3, 0x3, 0x0],
+];
+
+const Z = [
+  [0x3,0x6,0x0],
+  [0x1, 0x3, 0x2],
+  [0x6,0x3,0x0],
+  [0x2, 0x3, 0x1],
+];
+
+const TETROID_SET = [I, T, L, S];
 
 const INITIAL = {
   tetroid: {
     pos: [0,0], // x and y coordinates
-    shape: T, // rotate me
+    shape: Z, // rotate me
   },
-  board: new Array(ROWS).fill(0x000),
+  board: [
+    ...Array(ROWS).fill(0x1000),
+    0xFFF,
+  ],
 };
 
 // REMEMBER ENDIANNESS
@@ -66,37 +89,67 @@ function embedTetroid(tetroid) {
   const [x,y] = tetroid.pos;
   return [
     ...Array(y).fill(0x000),
-    ...tetroid.shape[0].map(s => s << x),
-    ...Array(ROWS - (y)).fill(0x000),
+    ...tetroid.shape[0].map(s => (s << x)),
+    ...Array((ROWS - (y+2)) < 0 ? 0 : ROWS - (y+2)).fill(0x000),
   ];
 }
 
-function transition(state, cb=s=>s) {
-  state = cb(state);
-  // const newBoard = state.tetroid.map((s,r) => (s ^ board[r]));
-  const newBoard = embedTetroid(state.tetroid).map((s,r) => (s ^ board[r]));
-  return {
-    tetroid: state.tetroid,
-    board: newBoard,
-  };
+function isColliding(state) {
+  let RETURN_VALUE = 0;
+  embedTetroid(state.tetroid).forEach((s, r) => {
+    if (s & state.board[r]) {
+      console.log("COLLISION DETECTED");
+      RETURN_VALUE = 1; 
+    }
+  });
+  return RETURN_VALUE;
 }
 
+const transition = (state, cb=s=>s) => ({tetroid: cb(state).tetroid, board: cb(state).board});
+
 function translateDown(state) {
-  return {...state,
-	  tetroid: {...state.tetroid,
-		    pos: [state.tetroid.pos[0], state.tetroid.pos[1] + 1]}};
+  const candidateState = {
+    ...state,
+    tetroid: {
+      ...state.tetroid,
+      pos: [state.tetroid.pos[0], state.tetroid.pos[1]+1]
+    }
+  };
+  if (isColliding(candidateState))  {
+    const newBoard = embedTetroid(state.tetroid).map((s,r) => (s ^ state.board[r]));
+    return {...state, board: newBoard, tetroid: {
+      pos: [0,0],
+      shape: TETROID_SET[Math.floor(TETROID_SET.length * Math.random())]
+    }};
+  }
+  return candidateState;
 }
 
 function translateLeft(state) {
-  return {...state,
-	  tetroid: {...state.tetroid,
-		    pos: [state.tetroid.pos[0] - 1, state.tetroid.pos[1]]}};
+  const candidateState = {
+    ...state,
+    tetroid: {
+      ...state.tetroid,
+      pos: [state.tetroid.pos[0]-1 < 0
+	    ? state.tetroid.pos[0]
+	    : state.tetroid.pos[0] - 1,
+	    state.tetroid.pos[1]]
+    }
+  };
+  if (isColliding(candidateState)) console.log("left collision");
+  return candidateState;
 }
 
 function translateRight(state) {
-  return {...state,
-	  tetroid: {...state.tetroid,
-		    pos: [state.tetroid.pos[0] + 1, state.tetroid.pos[1]]}};
+  const candidateState = {
+    ...state,
+    tetroid: {
+      ...state.tetroid,
+      pos: [state.tetroid.pos[0]+1, state.tetroid.pos[1]]
+    }
+  };
+  if (isColliding(candidateState)) return state;
+  return candidateState;
 }
 
 function rotate(state) {
@@ -125,7 +178,8 @@ function render(state) {
   for (let y = 0; y < ROWS; y++) {
     for (let x = 0; x < COLS; x++) {
       const cell = document.getElementById(`${x}-${y}`);
-      if (!((state.board[y] >> x) & 1)) {
+      if (!((state.board[y] >> x) & 1) &&
+	  !((embedTetroid(state.tetroid)[y] >> x) & 1)) {
 	cell.setAttribute("class", "free");
       } else {
 	cell.setAttribute("class", "occupied");
