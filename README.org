@@ -2,7 +2,9 @@
 Let's attempt to implement the classic game of tetris with vanilla JS, solely using the DOM.
 https://wonderful-kangaroo-a1eda1.netlify.app/
 ** Controls
-They are vim bindings, h j k l
+Standard bindings:
+- arrow keys, up arrow to rotate
+VIM Bindings:
 - h move left
 - l move right
 - j move down
