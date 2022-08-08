@@ -7,6 +7,9 @@ They are vim bindings, h j k l
 - l move right
 - j move down
 - k rotate
+** TODOS (known bugs)
+- No collision handling when moving tetroid to the left, I know what's wrong, because I handled left most boundary conditions using a ternary to artificially set x coordinate to zero, I never applied collision detection on a leftward movement. Just need to add this. IIRC there is a console log that fires for a lefthand collision.
+- Tetroid set is incomplete, need mirrors of L and Z
 ** Strategy
 - We will seek a "finite-state machine" implementation, where each state is mapped to its next state in as declarative of a way as is possible.
 - This will most likely entail some form of evaluation function, which tests for collisions and marks "complete" rows.
