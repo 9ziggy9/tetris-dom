@@ -1,5 +1,12 @@
 * Tetris in DOM
 Let's attempt to implement the classic game of tetris with vanilla JS, solely using the DOM.
+https://wonderful-kangaroo-a1eda1.netlify.app/
+** Controls
+They are vim bindings, h j k l
+- h move left
+- l move right
+- j move down
+- k rotate
 ** Strategy
 - We will seek a "finite-state machine" implementation, where each state is mapped to its next state in as declarative of a way as is possible.
 - This will most likely entail some form of evaluation function, which tests for collisions and marks "complete" rows.

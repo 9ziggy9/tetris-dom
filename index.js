@@ -38,8 +38,7 @@ const TETROID_SET = [I, T, L, S, Z];
 const INITIAL = {
   tetroid: {
     pos: [0,0], // x and y coordinates
-    // shape: TETROID_SET[Math.floor(TETROID_SET.length * Math.random())]
-    shape: L,
+    shape: TETROID_SET[Math.floor(TETROID_SET.length * Math.random())]
   },
   board: [
     ...Array(ROWS).fill(0x1000),
@@ -77,7 +76,6 @@ function isColliding(state) {
   let RETURN_VALUE = 0;
   embedTetroid(state.tetroid).forEach((s, r) => {
     if (s & state.board[r]) {
-      console.log("COLLISION DETECTED");
       RETURN_VALUE = 1; 
     }
   });
